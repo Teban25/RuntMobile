@@ -3,6 +3,9 @@ package runtmobile.udea.edu.co.runtmobile;
 import android.hardware.Camera;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTabHost;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -10,14 +13,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.view.View.OnClickListener;
+import android.widget.Toast;
+
 import java.io.IOException;
 
 /**
  * Created by davigofr on 2015/12/09.
  */
-public class Tab1 extends Fragment implements SurfaceHolder.Callback{
+public class Capture extends Fragment implements SurfaceHolder.Callback{
 
-    private LayoutInflater inflater = null;
+    //Fragment que contiene las pestañas
+    FragmentTabHost tabHost;
     // Libreria para manipular la camara
     Camera camera;
     byte[] bytesImage;
@@ -26,6 +32,8 @@ public class Tab1 extends Fragment implements SurfaceHolder.Callback{
     private SurfaceHolder surfaceHolder;
     private SurfaceView surfaceView;
     Button takePicture;
+    // Objeto de mensajes
+    Toast toast;
 
     // Metodos sobre escritos para la toma de la foto
     Camera.ShutterCallback shutterCallback = new Camera.ShutterCallback() {
@@ -46,6 +54,11 @@ public class Tab1 extends Fragment implements SurfaceHolder.Callback{
             // TODO Auto-generated method stub
             if(data != null){
                 bytesImage = data;
+                // Se notifica al usuario que esta enviando la imagen
+                toast = Toast.makeText(getActivity(),"Procesando solicitud...", Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                toast.show();
+                tabHost.setCurrentTabByTag("tab2");
             }
         }
     };
@@ -57,8 +70,9 @@ public class Tab1 extends Fragment implements SurfaceHolder.Callback{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.captura, container, false);
+        View v = inflater.inflate(R.layout.capture, container, false);
         surfaceView = (SurfaceView) v.findViewById(R.id.surface);
+        tabHost = (FragmentTabHost) getActivity().findViewById(android.R.id.tabhost);
         // Configuracion del surface para colocarle la camara
         surfaceHolder = surfaceView.getHolder();
         surfaceHolder.addCallback(this);
@@ -91,7 +105,9 @@ public class Tab1 extends Fragment implements SurfaceHolder.Callback{
             camera.setPreviewDisplay(holder);
             camera.startPreview();
             previewRunning = true;
-        }catch(Exception e){}
+        }catch(Exception e){
+            Log.e("Exception","Ha sucedido un error cuando se cambio la configuracion de la camara",e);
+        }
     }
 
     @Override
@@ -104,7 +120,7 @@ public class Tab1 extends Fragment implements SurfaceHolder.Callback{
             // Encedemos la camara
             camera.startPreview();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e("IOException","Ha sucedido un error al iniciar la configuración de la camara",e);
         }
     }
 
