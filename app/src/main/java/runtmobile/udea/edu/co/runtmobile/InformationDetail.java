@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 /**
  * Created by davigofr on 2015/12/09.
  */
-public class Tab2 extends Fragment{
+public class InformationDetail extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

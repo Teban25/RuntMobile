@@ -11,8 +11,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.view.View.OnClickListener;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -31,7 +31,7 @@ public class Capture extends Fragment implements SurfaceHolder.Callback{
     // Definicion del objeto donde se coloca la camara
     private SurfaceHolder surfaceHolder;
     private SurfaceView surfaceView;
-    Button takePicture;
+    ImageButton takePicture;
     // Objeto de mensajes
     Toast toast;
 
@@ -59,6 +59,7 @@ public class Capture extends Fragment implements SurfaceHolder.Callback{
                 toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
                 toast.show();
                 tabHost.setCurrentTabByTag("tab2");
+
             }
         }
     };
@@ -78,7 +79,7 @@ public class Capture extends Fragment implements SurfaceHolder.Callback{
         surfaceHolder.addCallback(this);
         surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
-        takePicture = (Button) v.findViewById(R.id.button);
+        takePicture = (ImageButton) v.findViewById(R.id.buttonCam);
         // Evento del boton para tomar la foto
         takePicture.setOnClickListener(new OnClickListener() {
             @Override
@@ -117,7 +118,7 @@ public class Capture extends Fragment implements SurfaceHolder.Callback{
         camera.setDisplayOrientation(90);
         try {
             camera.setPreviewDisplay(holder);
-            // Encedemos la camara
+            // Encendemos la camara
             camera.startPreview();
         } catch (IOException e) {
             Log.e("IOException","Ha sucedido un error al iniciar la configuración de la camara",e);
@@ -133,4 +134,9 @@ public class Capture extends Fragment implements SurfaceHolder.Callback{
         camera = null;
     }
     // Fin metodos sobre escritos surface
+
+    // Metodo para asignar la información entregada por el servicio en los componentes.
+    public void setInformationDetail(){
+
+    }
 }
