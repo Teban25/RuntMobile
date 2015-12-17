@@ -14,14 +14,27 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.Toast;
+import android.app.ProgressDialog;
+
+
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
+
+import cz.msebera.android.httpclient.Header;
 
 /**
  * Created by davigofr on 2015/12/09.
  */
 public class Capture extends Fragment implements SurfaceHolder.Callback{
 
+    // Progress Dialog Object
+    ProgressDialog prgDialog;
     //Fragment que contiene las pestañas
     FragmentTabHost tabHost;
     // Libreria para manipular la camara
@@ -59,10 +72,30 @@ public class Capture extends Fragment implements SurfaceHolder.Callback{
                 toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
                 toast.show();
                 tabHost.setCurrentTabByTag("tab2");
-
+                RequestParams params = new RequestParams();
+                params.put("imageData", bytesImage);
+                invokeWS(params);
             }
         }
     };
+
+    public void invokeWS(RequestParams params){
+        // Show Progress Dialog
+        prgDialog.show();
+        // Make RESTful webservice call using AsyncHttpClient object
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.post("http://localhost:8080/RuntWebApp/rest/vehicle", params, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+
+            }
+        });
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
