@@ -1,6 +1,7 @@
 package runtmobile.udea.edu.co.runtmobile;
 
 import android.hardware.Camera;
+import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTabHost;
@@ -16,17 +17,13 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 import android.app.ProgressDialog;
 
-
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-
-import cz.msebera.android.httpclient.Header;
 
 /**
  * Created by davigofr on 2015/12/09.
@@ -47,6 +44,10 @@ public class Capture extends Fragment implements SurfaceHolder.Callback{
     ImageButton takePicture;
     // Objeto de mensajes
     Toast toast;
+    String resultado;
+    String imageText;
+    // Objeto para invocar el servicio
+    GetVehicle getInformation;
 
     // Metodos sobre escritos para la toma de la foto
     Camera.ShutterCallback shutterCallback = new Camera.ShutterCallback() {
@@ -72,29 +73,60 @@ public class Capture extends Fragment implements SurfaceHolder.Callback{
                 toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
                 toast.show();
                 tabHost.setCurrentTabByTag("tab2");
-                RequestParams params = new RequestParams();
-                params.put("imageData", bytesImage);
-                invokeWS(params);
+                getInformation = new GetVehicle();
+                getInformation.execute();
             }
         }
     };
 
-    public void invokeWS(RequestParams params){
-        // Show Progress Dialog
-        prgDialog.show();
-        // Make RESTful webservice call using AsyncHttpClient object
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.post("http://localhost:8080/RuntWebApp/rest/vehicle", params, new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+    //Tarea asincrona para llamar el WS
 
+    private  class GetVehicle extends AsyncTask<Void, Void, Boolean> {
+        private String TAG = "getVehicle";
+        String response;
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            Log.i(TAG, "doInBackground");
+            String imageText;
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            // Definicion del servidor por el metodo POST
+            HttpPost post = new HttpPost("http://192.168.43.114:8080/RuntWebApp/rest/vehicle");
+            post.setHeader("Content-type", "application/json");
+            try {
+                // Se contruye el objeto JSON
+                //JSONObject dato = new JSONObject();
+                imageText = new String(bytesImage);
+                //dato.put("imageData",imageText);
+                System.out.println(imageText);
+
+                StringEntity entity = new StringEntity(imageText);
+                post.setEntity(entity);
+
+                //Enviamos la imagen
+                HttpResponse resp = httpClient.execute(post);
+                resultado = EntityUtils.toString(resp.getEntity());
+                // JSONObject json = new JSONObject(resultado);
+                System.out.println("Nos llega: " + resultado.toString() + "");
+            } catch (Exception e) {
+                Log.e("RESTService", "Error:", e);
+                return false;
             }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
+            return true;
+        }
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            if(success==false){
+                Toast.makeText(getActivity().getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
+            }else{
+                Toast.makeText(getActivity().getApplicationContext(), "El resultado es: "+resultado, Toast.LENGTH_LONG).show();
             }
-        });
+        }
+
+        @Override
+        protected void onCancelled() {
+            Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
