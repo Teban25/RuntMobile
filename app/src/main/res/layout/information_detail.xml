@@ -8,20 +8,21 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="521dp"
+        android:layout_height="493dp"
         android:id="@+id/capa2"
         android:padding="20dp"
         android:gravity="top"
-        android:elevation="10dp">
+        android:elevation="10dp"
+        android:visibility="visible">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Información del Propietario"
             android:id="@+id/textView2"
+            android:textSize="21dp"
             android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true"
-            android:textSize="21dp" />
+            android:layout_alignParentStart="true" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -29,8 +30,7 @@
             android:text="Nombre:"
             android:id="@+id/textView3"
             android:layout_below="@+id/textView2"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="29dp" />
+            android:layout_alignParentStart="true" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -64,9 +64,10 @@
             android:layout_height="wrap_content"
             android:text="Información del Vehículo"
             android:id="@+id/textView6"
-            android:layout_centerVertical="true"
+            android:textSize="21dp"
+            android:layout_below="@+id/textView5"
             android:layout_alignParentStart="true"
-            android:textSize="21dp" />
+            android:layout_marginTop="28dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -74,123 +75,141 @@
             android:text="Placa:"
             android:id="@+id/textView7"
             android:layout_below="@+id/textView6"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="24dp" />
+            android:layout_alignStart="@+id/textView9" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Marca:"
             android:id="@+id/textView8"
-            android:layout_marginTop="14dp"
-            android:layout_below="@+id/textView7"
-            android:layout_alignParentStart="true" />
+            android:layout_marginTop="23dp"
+            android:layout_below="@+id/textView9"
+            android:layout_alignEnd="@+id/textView" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Color:"
             android:id="@+id/textView9"
-            android:layout_below="@+id/textView8"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="16dp" />
+            android:layout_centerVertical="true"
+            android:layout_alignStart="@+id/textView8" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Modelo:"
             android:id="@+id/textView10"
-            android:layout_marginTop="17dp"
-            android:layout_below="@+id/textView9"
-            android:layout_alignParentStart="true" />
+            android:layout_below="@+id/textView8"
+            android:layout_alignStart="@+id/textView8"
+            android:layout_marginTop="25dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Rev. Tecnicomecánica:"
             android:id="@+id/textView11"
-            android:layout_marginTop="17dp"
             android:layout_below="@+id/textView10"
-            android:layout_alignParentStart="true" />
+            android:layout_alignStart="@+id/textView10"
+            android:layout_marginTop="22dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textViewNombre"
-            android:layout_alignTop="@+id/textView3"
-            android:layout_toEndOf="@+id/textView6" />
+            android:text="Miguel Angel"
+            android:visibility="invisible"
+            android:layout_above="@+id/textView"
+            android:layout_alignStart="@+id/textViewMarca" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textViewApellido"
+            android:text="Ruiz Gonzales"
+            android:visibility="invisible"
             android:layout_alignTop="@+id/textView"
-            android:layout_toEndOf="@+id/textView6" />
+            android:layout_toEndOf="@+id/textView8" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textViewIdentificacion"
-            android:layout_alignTop="@+id/textView4"
-            android:layout_alignStart="@+id/textViewApellido" />
+            android:text="1035859551"
+            android:visibility="invisible"
+            android:layout_above="@+id/textView5"
+            android:layout_toEndOf="@+id/textViewMarca" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textViewLicencia"
+            android:text="123453456789"
+            android:visibility="invisible"
             android:layout_alignTop="@+id/textView5"
-            android:layout_alignStart="@+id/textViewIdentificacion" />
+            android:layout_toEndOf="@+id/textView5" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textViewPlaca"
+            android:text="GZM21B"
+            android:visibility="invisible"
             android:layout_alignTop="@+id/textView7"
-            android:layout_alignStart="@+id/textViewLicencia" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/textViewMarca"
-            android:layout_alignTop="@+id/textView8"
-            android:layout_alignStart="@+id/textViewPlaca" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/textViewColor"
-            android:layout_alignTop="@+id/textView9"
-            android:layout_toEndOf="@+id/textView6" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/textViewModelo"
-            android:layout_alignTop="@+id/textView10"
             android:layout_alignStart="@+id/textViewColor" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/textViewMarca"
+            android:text="MAZDA"
+            android:visibility="invisible"
+            android:layout_above="@+id/textView10"
+            android:layout_toEndOf="@+id/textView10" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textViewColor"
+            android:text="ROJO"
+            android:visibility="invisible"
+            android:layout_above="@+id/textView8"
+            android:layout_toEndOf="@+id/textView8" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textViewModelo"
+            android:text="2015"
+            android:visibility="invisible"
+            android:layout_alignTop="@+id/textView10"
+            android:layout_toEndOf="@+id/textView10" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:id="@+id/textViewRevision"
+            android:text="2015-06-11T22:35:41"
+            android:visibility="invisible"
             android:layout_alignTop="@+id/textView11"
-            android:layout_alignStart="@+id/textViewModelo" />
+            android:layout_toEndOf="@+id/textView11" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="SOAT (Vencimiento):"
             android:id="@+id/textView12"
+            android:layout_marginTop="22dp"
             android:layout_below="@+id/textView11"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="16dp" />
+            android:layout_alignStart="@+id/textView11" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textViewSOAT"
+            android:text="2015-06-11T22:35:41"
+            android:visibility="invisible"
             android:layout_alignTop="@+id/textView12"
-            android:layout_alignStart="@+id/textViewRevision" />
+            android:layout_toEndOf="@+id/textView12" />
 
     </RelativeLayout>
 </LinearLayout>

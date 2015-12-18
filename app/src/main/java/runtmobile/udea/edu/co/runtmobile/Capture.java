@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.app.ProgressDialog;
 
@@ -21,9 +22,9 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -44,12 +45,22 @@ public class Capture extends Fragment implements SurfaceHolder.Callback{
     private SurfaceHolder surfaceHolder;
     private SurfaceView surfaceView;
     ImageButton takePicture;
-    // Objeto de mensajes
-    Toast toast;
     String resultado;
-    String imageText;
     // Objeto para invocar el servicio
     GetVehicle getInformation;
+    JSONObject datosRecibidos;
+    ProgressDialog progress;
+    TextView nombre;
+    TextView apellido;
+    TextView dni;
+    TextView licencia;
+    TextView placa;
+    TextView marca;
+    TextView color;
+    TextView modelo;
+    TextView tecno;
+    TextView soat;
+
 
     // Metodos sobre escritos para la toma de la foto
     Camera.ShutterCallback shutterCallback = new Camera.ShutterCallback() {
@@ -70,12 +81,9 @@ public class Capture extends Fragment implements SurfaceHolder.Callback{
             // TODO Auto-generated method stub
             if(data != null){
                 bytesImage = data;
-                // Se notifica al usuario que esta enviando la imagen
-                toast = Toast.makeText(getActivity(),"Procesando solicitud...", Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-                toast.show();
                 tabHost.setCurrentTabByTag("tab2");
-                getInformation = new GetVehicle();
+                progress = new ProgressDialog(getActivity());
+                getInformation = new GetVehicle(progress);
                 getInformation.execute();
             }
         }
@@ -87,29 +95,27 @@ public class Capture extends Fragment implements SurfaceHolder.Callback{
         private String TAG = "getVehicle";
         String response;
 
+        public GetVehicle(ProgressDialog progress1) {
+            progress = progress1;
+        }
+
+        public void onPreExecute() {
+            progress.show();
+        }
+
         @Override
         protected Boolean doInBackground(Void... params) {
             Log.i(TAG, "doInBackground");
-            String imageText;
-            // DefaultHttpClient httpClient = new DefaultHttpClient();
-            // Definicion del servidor por el metodo POST
-            //HttpPost post = new HttpPost("http://192.168.43.114:8080/RuntWebApp/rest/vehicle");
-            //post.setHeader("Content-type", "application/json");
             try {
-                // Se contruye el objeto JSON
-                //JSONObject dato = new JSONObject();
-                //imageText = new String(bytesImage);
-                //dato.put("imageData",imageText);
-                //System.out.println(imageText);
-
                 HttpClient client = new DefaultHttpClient();
-                HttpPost httpPost = new HttpPost("http://192.168.1.2:8080/RuntWebApp/rest/vehicle");
+                HttpPost httpPost = new HttpPost("http://10.10.23.3:8080/RuntWebApp/rest/vehicle");
                 ByteArrayEntity entity = new ByteArrayEntity(bytesImage);
                 entity.setContentType("application/octet-stream");
                 httpPost.setEntity(entity);
                 HttpResponse resp = client.execute(httpPost);
-                // JSONObject json = new JSONObject(resultado);
-                System.out.println("Nos llega: " + resultado.toString() + "");
+                resultado = EntityUtils.toString(resp.getEntity());
+                System.out.println("Resultado: " + resultado.toString() + "");
+                datosRecibidos = new JSONObject(resultado);
             } catch (Exception e) {
                 Log.e("RESTService", "Error:", e);
                 return false;
@@ -119,9 +125,11 @@ public class Capture extends Fragment implements SurfaceHolder.Callback{
         @Override
         protected void onPostExecute(final Boolean success) {
             if(success==false){
+                progress.dismiss();
                 Toast.makeText(getActivity().getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
             }else{
-                Toast.makeText(getActivity().getApplicationContext(), "El resultado es: "+resultado, Toast.LENGTH_LONG).show();
+                progress.dismiss();
+                setInformationDetail(datosRecibidos);
             }
         }
 
@@ -203,7 +211,46 @@ public class Capture extends Fragment implements SurfaceHolder.Callback{
     // Fin metodos sobre escritos surface
 
     // Metodo para asignar la información entregada por el servicio en los componentes.
-    public void setInformationDetail(){
+    public void setInformationDetail(JSONObject datosEntrega){
+        nombre = (TextView)getActivity().findViewById(R.id.textViewNombre);
+        apellido = (TextView)getActivity().findViewById(R.id.textViewApellido);
+        dni = (TextView)getActivity().findViewById(R.id.textViewIdentificacion);
+        licencia = (TextView)getActivity().findViewById(R.id.textViewLicencia);
+        placa = (TextView)getActivity().findViewById(R.id.textViewPlaca);
+        marca = (TextView)getActivity().findViewById(R.id.textViewMarca);
+        color = (TextView)getActivity().findViewById(R.id.textViewColor);
+        modelo = (TextView)getActivity().findViewById(R.id.textViewModelo);
+        tecno = (TextView)getActivity().findViewById(R.id.textViewRevision);
+        soat = (TextView)getActivity().findViewById(R.id.textViewSOAT);
+        // Seteo cada uno de los textView con su respectivo valor del Json
+        try{
+            nombre.setText(datosEntrega.getString("name"));
+            apellido.setText(datosEntrega.getString("lastName"));
+            dni.setText(datosEntrega.getString("idNumber"));
+            licencia.setText(datosEntrega.getString("licenseNumber"));
+            placa.setText(datosEntrega.getJSONArray("vehicles").getJSONObject(0).getString("carriagePlate"));
+            marca.setText(datosEntrega.getJSONArray("vehicles").getJSONObject(0).getJSONObject("brand").getString("name"));
+            color.setText(datosEntrega.getJSONArray("vehicles").getJSONObject(0).getString("color"));
+            modelo.setText(datosEntrega.getJSONArray("vehicles").getJSONObject(0).getString("model"));
+            tecno.setText(datosEntrega.getJSONArray("vehicles").getJSONObject(0).getString("mechanicalTechno"));
+            soat.setText(datosEntrega.getJSONArray("vehicles").getJSONObject(0).getString("soat"));
+            setVisiblesTextV();
+        }catch (Exception e){
+            Log.e("JSON ERROR","Error:",e);
+        }
+    }
 
+    public void setVisiblesTextV(){
+        //Se setean todos los campos a visibles
+        nombre.setVisibility(View.VISIBLE);
+        apellido.setVisibility(View.VISIBLE);
+        dni.setVisibility(View.VISIBLE);
+        licencia.setVisibility(View.VISIBLE);
+        placa.setVisibility(View.VISIBLE);
+        marca.setVisibility(View.VISIBLE);
+        color.setVisibility(View.VISIBLE);
+        modelo.setVisibility(View.VISIBLE);
+        tecno.setVisibility(View.VISIBLE);
+        soat.setVisibility(View.VISIBLE);
     }
 }
