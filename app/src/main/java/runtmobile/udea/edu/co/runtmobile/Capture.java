@@ -18,7 +18,9 @@ import android.widget.Toast;
 import android.app.ProgressDialog;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
@@ -89,23 +91,23 @@ public class Capture extends Fragment implements SurfaceHolder.Callback{
         protected Boolean doInBackground(Void... params) {
             Log.i(TAG, "doInBackground");
             String imageText;
-            DefaultHttpClient httpClient = new DefaultHttpClient();
+            // DefaultHttpClient httpClient = new DefaultHttpClient();
             // Definicion del servidor por el metodo POST
-            HttpPost post = new HttpPost("http://192.168.43.114:8080/RuntWebApp/rest/vehicle");
-            post.setHeader("Content-type", "application/json");
+            //HttpPost post = new HttpPost("http://192.168.43.114:8080/RuntWebApp/rest/vehicle");
+            //post.setHeader("Content-type", "application/json");
             try {
                 // Se contruye el objeto JSON
                 //JSONObject dato = new JSONObject();
-                imageText = new String(bytesImage);
+                //imageText = new String(bytesImage);
                 //dato.put("imageData",imageText);
-                System.out.println(imageText);
+                //System.out.println(imageText);
 
-                StringEntity entity = new StringEntity(imageText);
-                post.setEntity(entity);
-
-                //Enviamos la imagen
-                HttpResponse resp = httpClient.execute(post);
-                resultado = EntityUtils.toString(resp.getEntity());
+                HttpClient client = new DefaultHttpClient();
+                HttpPost httpPost = new HttpPost("http://192.168.1.2:8080/RuntWebApp/rest/vehicle");
+                ByteArrayEntity entity = new ByteArrayEntity(bytesImage);
+                entity.setContentType("application/octet-stream");
+                httpPost.setEntity(entity);
+                HttpResponse resp = client.execute(httpPost);
                 // JSONObject json = new JSONObject(resultado);
                 System.out.println("Nos llega: " + resultado.toString() + "");
             } catch (Exception e) {
@@ -125,7 +127,7 @@ public class Capture extends Fragment implements SurfaceHolder.Callback{
 
         @Override
         protected void onCancelled() {
-            Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity().getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
         }
     }
 
